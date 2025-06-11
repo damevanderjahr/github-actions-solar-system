@@ -82,8 +82,10 @@ jobs:
 
       - run: kubectl version -o yaml
 
-      - run: |
-           echo "INGRESS_IP=$(kubectl -n ingress-nginx get services ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}")" >> $GITHUB_ENV
+      - run: >
+           echo "INGRESS_IP=$(kubectl -n ingress-nginx get services 
+           ingress-nginx-controller -o 
+           jsonpath="{.status.loadBalancer.ingress[0].ip}")" >> $GITHUB_ENV
 
       - name: Replace placeholders
         uses: cschleiden/replace-tokens@v1
@@ -94,7 +96,8 @@ jobs:
         env:
           NAMESPACE: ${{ vars.NAMESPACE }}
           REPLICAS: ${{ vars.REPLICAS }}
-          IMAGE: ghcr.io/damevanderjahr/solar-system:${{ github.sha }}
+          IMAGE: >-
+            ghcr.io/${{ github.repository_owner }}/solar-system:${{ github.sha }}
           INGRESS_IP: ${{ env.INGRESS_IP }}
       
       - run: cat kubernetes/development/*.yaml
